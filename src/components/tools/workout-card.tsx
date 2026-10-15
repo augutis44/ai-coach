@@ -4,9 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { ToolLabel } from "./tool-label";
 
-export function WorkoutCard({ workout, send, busy }: { workout: Workout; send: Send; busy: boolean }) {
+type Asked = { focus?: string; intensity?: string };
+
+/** `asked` is the search input: intensity and focus only show as tags when the user asked for them. */
+export function WorkoutCard({ workout, asked, send, busy }: { workout: Workout; asked: Asked; send: Send; busy: boolean }) {
   const { name, minutes, equipment, intensity, focus, description } = workout;
-  const meta = [`${minutes} min`, equipment === "none" ? "No equipment" : equipment, intensity, focus];
+  const meta = [`${minutes} min`, equipment === "none" ? "No equipment" : equipment];
+  if (asked.intensity) meta.push(`${intensity} intensity`);
+  if (asked.focus) meta.push(focus);
   return (
     <article className="p-4.5 bg-card border border-line rounded-2xl shadow-xs flex flex-col gap-3.5">
       <header className="flex items-start justify-between gap-3 flex-wrap">

@@ -13,7 +13,7 @@ export function ToolResult({ part, replyText, send, busy }: { part: CoachPart; r
     case "tool-search_workouts": {
       // ponytail: shows the first library workout the reply names; switch to a pick_workout tool if the model starts paraphrasing names.
       const workout = part.output.find((w) => replyText.includes(w.name));
-      return workout ? <WorkoutCard workout={workout} send={send} busy={busy} /> : null;
+      return workout ? <WorkoutCard workout={workout} asked={part.input} send={send} busy={busy} /> : null;
     }
     case "tool-ask_workout_quiz":
       return <WorkoutQuizCard questions={part.output.questions} send={send} busy={busy} />;

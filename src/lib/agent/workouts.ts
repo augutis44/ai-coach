@@ -18,6 +18,15 @@ export const WORKOUTS = [
       "40 s on / 20 s off: burpees, mountain climbers, jump squats, plank jacks. Sweaty, no gear.",
   },
   {
+    name: "Bodyweight Leg Burner",
+    focus: "legs",
+    minutes: 20,
+    equipment: "none",
+    intensity: "high",
+    description:
+      "4 rounds, 45 s on / 15 s off: jump squats, reverse lunges, couch split squats, glute bridges, wall sit. 1 min rest between rounds.",
+  },
+  {
     name: "Morning Mobility Flow",
     focus: "mobility",
     minutes: 15,
