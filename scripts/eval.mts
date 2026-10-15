@@ -1,8 +1,8 @@
 // Live eval: runs the real agent loop against Claude. `pnpm eval` (needs ANTHROPIC_API_KEY in .env.local).
 // Kept out of `pnpm test` so CI deploys don't need an API key.
-import { generateText, isStepCount } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
-import { SYSTEM_PROMPT, WORKOUTS, tools } from "../src/lib/chat.ts";
+import { generateText } from "ai";
+import { coachSettings } from "../src/lib/agent/settings.ts";
+import { WORKOUTS } from "../src/lib/agent/workouts.ts";
 
 // ponytail: cases 1-5 are the design board's stand-ins (board says "replace with the provided cases"); 6-8 are extra guardrail checks.
 // `tools` = exactly the tools that must be called (order-free); [] = no tools at all.
@@ -21,11 +21,8 @@ const cases = [
 let failed = 0;
 for (const c of cases) {
   const res = await generateText({
-    model: anthropic("claude-haiku-5-5"),
-    system: SYSTEM_PROMPT,
+    ...coachSettings(),
     prompt: c.input,
-    tools,
-    stopWhen: isStepCount(5),
   });
   const called = res.steps.flatMap((s) => s.toolCalls.map((t) => t.toolName));
   const ok = (c.tools ? [...new Set(called)].sort().join() === [...c.tools].sort().join() : !called.includes("flag_guardrail")) && c.text.test(res.text);

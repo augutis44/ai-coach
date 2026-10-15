@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { MockLanguageModelV4, convertArrayToReadableStream } from "ai/test";
-import { SYSTEM_PROMPT } from "@/lib/chat";
+import { SYSTEM_PROMPT } from "@/lib/agent/prompt";
 import { POST } from "./route";
 
 // Fake model: streams "Hello world" instead of calling the Anthropic API.

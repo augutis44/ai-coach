@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { trimHistory } from "./chat";
+import { trimHistory } from "./history";
 
 describe("trimHistory", () => {
   it("keeps the last N messages", () => {
