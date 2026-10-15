@@ -5,7 +5,7 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { ToolLabel } from "./tool-label";
 
-type Plan = InferUITool<typeof tools.deliver_purchase>["output"];
+type Plan = Extract<InferUITool<typeof tools.deliver_purchase>["output"], { kind: "plan" }>;
 
 /** What Max hands over right after checkout: the PDF and week 1. */
 export function PlanCard({ plan, send, busy }: { plan: Plan; send: Send; busy: boolean }) {

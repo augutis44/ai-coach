@@ -14,7 +14,7 @@ export function CheckoutButton({
   className,
   children,
 }: {
-  offer: Offer;
+  offer: Pick<Offer, "id" | "product" | "price" | "badge" | "checkoutNote">;
   send: Send;
   disabled?: boolean;
   className?: string;
@@ -30,7 +30,7 @@ export function CheckoutButton({
     setTimeout(() => {
       setPaying(false);
       dialog.current?.close();
-      send(`Payment confirmed · ${offer.product} · ${offer.price}`, { event: "purchase_completed", at: Date.now() });
+      send(`Payment confirmed · ${offer.product} · ${offer.price}`, { event: "purchase_completed", product: offer.id, at: Date.now() });
     }, 900);
   };
 
@@ -64,11 +64,13 @@ export function CheckoutButton({
 
         <div className="flex items-center gap-3 p-3 border border-line rounded-[14px]">
           <span aria-hidden="true" className="w-11 h-13.5 shrink-0 rounded-lg bg-zinc-700 text-lime inline-flex items-center justify-center text-[11px] leading-[13px] font-bold text-center">
-            12<br />WK
+            {offer.badge[0]}
+            <br />
+            {offer.badge[1]}
           </span>
           <span className="flex-1 min-w-0 flex flex-col gap-0.5">
             <span className="text-[15px] leading-5 font-semibold text-ink">{offer.product}</span>
-            <span className="text-[13px] leading-4.5 text-muted">PDF · dumbbell track · Sunday check-ins</span>
+            <span className="text-[13px] leading-4.5 text-muted">{offer.checkoutNote}</span>
           </span>
           <span className="flex flex-col items-end">
             <span className="text-base leading-5 font-bold text-ink">{offer.price}</span>

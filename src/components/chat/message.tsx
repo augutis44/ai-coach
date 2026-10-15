@@ -36,9 +36,10 @@ function CoachMessageView({ message, send, busy }: { message: CoachMessage; send
         if (p.type !== "text") return <ToolResult key={i} part={p} replyText={replyText} send={send} busy={busy} />;
         if (!p.text.trim()) return null;
         return (
-          <p key={i} className="whitespace-pre-wrap">
-            <RichText text={p.text} />
-          </p>
+          // div, not p: inline checkout links carry a <dialog>/<form>, which can't live inside a <p>.
+          <div key={i} className="whitespace-pre-wrap">
+            <RichText text={p.text} send={send} busy={busy} />
+          </div>
         );
       })}
       {guard?.type === "tool-flag_guardrail" && guard.state === "output-available" && <GuardrailNotice category={guard.output.category} />}

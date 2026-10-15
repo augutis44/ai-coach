@@ -6,9 +6,13 @@ import { POST } from "./route";
 // Fake model: streams "Hello world" instead of calling the Anthropic API.
 const model = vi.hoisted(() => ({ current: undefined as unknown }));
 vi.mock("@ai-sdk/anthropic", () => ({ anthropic: () => model.current }));
+// Fake visitor "Ada" and an in-memory database.
+vi.mock("next/headers", () => ({ cookies: async () => ({ get: () => ({ value: "Ada" }) }) }));
+const db = vi.hoisted(() => ({ saveMessages: vi.fn() }));
+vi.mock("@/lib/db", () => db);
 
 describe("POST /api/chat", () => {
-  it("streams the model reply and passes the system prompt and user message", async () => {
+  it("streams the reply, passes the system prompt and user message, and saves the chat under the visitor's name", async () => {
     const mock = new MockLanguageModelV4({
       doStream: {
         stream: convertArrayToReadableStream([
@@ -44,7 +48,14 @@ describe("POST /api/chat", () => {
     expect(body).toContain('"delta":"world"');
 
     const prompt = mock.doStreamCalls[0].prompt;
-    expect(prompt[0]).toMatchObject({ role: "system", content: SYSTEM_PROMPT });
+    expect(prompt[0].role).toBe("system");
+    expect(prompt[0].content).toContain(SYSTEM_PROMPT);
     expect(prompt[1]).toMatchObject({ role: "user", content: [{ type: "text", text: "Hi" }] });
+
+    await vi.waitFor(() => expect(db.saveMessages).toHaveBeenCalledOnce());
+    const [name, saved] = db.saveMessages.mock.calls[0];
+    expect(name).toBe("Ada");
+    expect(saved).toMatchObject([{ id: "m1", role: "user" }, { role: "assistant" }]);
+    expect(saved[1].parts).toContainEqual(expect.objectContaining({ type: "text", text: "Hello world" }));
   });
 });

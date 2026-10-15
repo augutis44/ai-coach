@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Database
+
+Chats are saved in Postgres (Supabase free tier), one row per name, see `schema.sql`.
+
+1. In Supabase: Project Settings → Database, copy the password into `DATABASE_URL` and `DIRECT_URL` in `.env.local` (replace `[YOUR-PASSWORD]`).
+2. Paste `schema.sql` into the Supabase SQL editor and run it once.
+3. On Vercel: Settings → Environment Variables, add `DATABASE_URL` with the same value.
+
 ## Getting Started
 
 First, run the development server:

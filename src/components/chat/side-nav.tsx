@@ -1,3 +1,4 @@
+import { clearName } from "@/app/actions";
 import { OFFERS } from "@/lib/agent/offers";
 import type { Send } from "@/lib/types";
 import { CheckoutButton } from "@/components/checkout/checkout-button";
@@ -11,7 +12,9 @@ const NAV = [
 ];
 
 /** Desktop sidebar. Only "Coach" is live; the rest are placeholders from the design. */
-export function SideNav({ purchased, send, busy }: { purchased: boolean; send: Send; busy: boolean }) {
+const initials = (name: string) => name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+
+export function SideNav({ name, purchased, send, busy }: { name: string; purchased: boolean; send: Send; busy: boolean }) {
   return (
     <nav aria-label="Main" className="hidden lg:flex w-58 shrink-0 py-5 px-3.5 bg-surface border-r border-line flex-col gap-7">
       <a href="#" className="flex items-center gap-2.5 px-2 py-1 no-underline text-ink hover:text-ink">
@@ -72,10 +75,12 @@ export function SideNav({ purchased, send, busy }: { purchased: boolean; send: S
       )}
 
       <div className="flex items-center gap-2.5 px-2 py-1">
-        <span aria-hidden="true" className="size-8 rounded-full bg-line text-ink inline-flex items-center justify-center text-xs font-semibold">AM</span>
+        <span aria-hidden="true" className="size-8 shrink-0 rounded-full bg-line text-ink inline-flex items-center justify-center text-xs font-semibold">{initials(name)}</span>
         <span className="flex flex-col min-w-0">
-          <span className="text-sm leading-4.5 font-semibold text-ink">Alex Morgan</span>
-          <span className="text-xs leading-4 text-muted">alex@example.com</span>
+          <span className="text-sm leading-4.5 font-semibold text-ink truncate">{name}</span>
+          <form action={clearName}>
+            <button type="submit" className="text-xs leading-4 text-muted hover:text-ink cursor-pointer">Switch user</button>
+          </form>
         </span>
       </div>
     </nav>

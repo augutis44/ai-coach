@@ -15,7 +15,8 @@ const THEME_SCRIPT = `try{var t=localStorage.theme;document.documentElement.data
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${geist.variable} h-full antialiased`} suppressHydrationWarning>
-      <body className="min-h-full flex flex-col">
+      {/* suppressHydrationWarning: browser extensions (ColorZilla, Grammarly) add attributes to <body> before React loads. */}
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         {children}
       </body>

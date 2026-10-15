@@ -92,3 +92,10 @@ export const WORKOUTS = [
 ];
 
 export type Workout = (typeof WORKOUTS)[number];
+
+/** Asked when the user wants a workout but hasn't said their time or equipment. */
+export const WORKOUT_QUIZ = [
+  { id: "time", label: "How much time do you have?", options: ["10 min", "15 min", "20 min", "30 min", "45+ min"] },
+  { id: "equipment", label: "What do you have to train with?", options: ["No equipment", "Dumbbells", "Kettlebell", "Mat", "Gym", "Outdoors"] },
+  { id: "energy", label: "How's your energy today?", options: ["Low", "Moderate", "High"] },
+];
