@@ -1,34 +1,17 @@
 import type { GuardCategory } from "@/lib/agent/tools";
+import { Icon } from "@/components/ui/icon";
 
 export const GUARD_LABEL: Record<GuardCategory, string> = {
-  starvation_diet: "extreme starvation diet",
-  medical: "medical diagnosis",
-  off_topic: "off-topic or explicit content",
+  starvation_diet: "extreme diet",
+  medical: "medical advice",
+  off_topic: "off-topic",
 };
 
 export function GuardrailNotice({ category }: { category: GuardCategory }) {
   return (
-    <div
-      role="note"
-      className="flex items-center gap-2 px-3 py-2 bg-danger-soft border border-danger-line rounded-lg text-[13px] leading-4 text-danger"
-    >
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-        className="shrink-0"
-      >
-        <path d="M8 2 L14 13 H2 Z" />
-        <path d="M8 6.5 V9.5" />
-        <path d="M8 11.5 V11.6" />
-      </svg>
-      <span>Guardrail: {GUARD_LABEL[category]} · refused and redirected</span>
+    <div role="note" className="inline-flex self-start items-center gap-2 px-2.5 py-1.5 rounded-lg bg-soft text-xs leading-4 text-muted">
+      <Icon size={14}><path d="M12 2 4 5v6c0 5 3.5 9.5 8 11 4.5-1.5 8-6 8-11V5z" /></Icon>
+      <span>Safety guardrail · {GUARD_LABEL[category]}, redirected</span>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import type { CoachMessage, ToolName } from "./types";
 const INTENT: Record<string, string> = {
   search_workouts: "workout_advice",
   generate_upsell_link: "upsell_trigger",
+  deliver_purchase: "post_purchase",
   send_review_request: "gratitude",
 };
 

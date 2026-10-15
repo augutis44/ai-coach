@@ -1,64 +1,55 @@
 import type { CoachMessage, Send } from "@/lib/types";
-import { CoachAvatar } from "@/components/ui/avatar";
+import { Icon } from "@/components/ui/icon";
 import { GuardrailNotice } from "@/components/tools/guardrail-notice";
 import { ToolResult } from "@/components/tools/tool-result";
 import { RichText } from "./rich-text";
 
-/** Coach-side row: avatar on the left, a column of bubbles and cards on the right. */
-export function CoachRow({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex gap-2.5 items-start animate-rise">
-      <CoachAvatar />
-      <div className="flex flex-col gap-2.5 max-w-140 min-w-0">{children}</div>
-    </div>
-  );
-}
-
-export function CoachBubble({ children, first = true }: { children: React.ReactNode; first?: boolean }) {
-  return (
-    <div
-      className={`px-4 py-3 bg-white border border-line whitespace-pre-wrap shadow-xs ${first ? "rounded-[4px_16px_16px_16px]" : "rounded-2xl"}`}
-    >
-      {children}
-    </div>
-  );
-}
+const time = (at: number) => new Date(at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 
 function UserMessage({ text }: { text: string }) {
   return (
     <div className="flex justify-end animate-rise">
-      <div className="max-w-130 px-4 py-3 bg-ink text-white rounded-[16px_16px_4px_16px] whitespace-pre-wrap shadow-xs">{text}</div>
+      <div className="max-w-120 px-3.5 py-2.5 bg-bubble text-bubble-fg rounded-[18px_18px_4px_18px] whitespace-pre-wrap">{text}</div>
+    </div>
+  );
+}
+
+/** Automated checkout receipt, shown as a status pill instead of a bubble. */
+function PurchasePill({ text, at }: { text: string; at?: number }) {
+  return (
+    <div className="self-center inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-ok-soft text-ok text-[13px] leading-4 animate-rise">
+      <Icon size={14} strokeWidth={2.4}><path d="M5 12l5 5L20 7" /></Icon>
+      <span>{text}{at && ` · ${time(at)}`}</span>
     </div>
   );
 }
 
 function CoachMessageView({ message, send, busy }: { message: CoachMessage; send: Send; busy: boolean }) {
   const replyText = message.parts.map((p) => (p.type === "text" ? p.text : "")).join("\n");
-  const firstText = message.parts.findIndex((p) => p.type === "text" && p.text.trim());
   const guard = message.parts.find((p) => p.type === "tool-flag_guardrail" && p.state === "output-available");
+  const at = message.metadata?.at;
 
   return (
-    <CoachRow>
+    <div className="flex flex-col gap-3 max-w-155 animate-rise">
+      <div className="text-xs leading-4 text-muted font-medium">Max{at && ` · ${time(at)}`}</div>
       {message.parts.map((p, i) => {
         if (p.type !== "text") return <ToolResult key={i} part={p} replyText={replyText} send={send} busy={busy} />;
         if (!p.text.trim()) return null;
         return (
-          <CoachBubble key={i} first={i === firstText}>
+          <p key={i} className="whitespace-pre-wrap">
             <RichText text={p.text} />
-          </CoachBubble>
+          </p>
         );
       })}
-      {guard?.type === "tool-flag_guardrail" && guard.state === "output-available" && (
-        <GuardrailNotice category={guard.output.category} />
-      )}
-    </CoachRow>
+      {guard?.type === "tool-flag_guardrail" && guard.state === "output-available" && <GuardrailNotice category={guard.output.category} />}
+    </div>
   );
 }
 
 export function Message({ message, send, busy }: { message: CoachMessage; send: Send; busy: boolean }) {
   if (message.role === "user") {
     const text = message.parts.map((p) => (p.type === "text" ? p.text : "")).join("\n");
-    return <UserMessage text={text} />;
+    return message.metadata?.event ? <PurchasePill text={text} at={message.metadata.at} /> : <UserMessage text={text} />;
   }
   return <CoachMessageView message={message} send={send} busy={busy} />;
 }

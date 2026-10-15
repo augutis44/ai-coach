@@ -1,4 +1,5 @@
 import type { CoachPart, Send } from "@/lib/types";
+import { PlanCard } from "./plan-card";
 import { ReviewCard } from "./review-card";
 import { UpsellCard } from "./upsell-card";
 import { WorkoutCard } from "./workout-card";
@@ -15,7 +16,9 @@ export function ToolResult({ part, replyText, send, busy }: { part: CoachPart; r
     case "tool-send_review_request":
       return <ReviewCard url={part.output.url} />;
     case "tool-generate_upsell_link":
-      return <UpsellCard offer={part.output} />;
+      return <UpsellCard offer={part.output} send={send} busy={busy} />;
+    case "tool-deliver_purchase":
+      return <PlanCard plan={part.output} send={send} busy={busy} />;
     default:
       return null;
   }

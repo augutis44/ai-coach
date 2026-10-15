@@ -1,4 +1,5 @@
 import { jsonSchema, tool } from "ai";
+import { OFFERS } from "./offers.ts";
 import { WORKOUTS, type Workout } from "./workouts.ts";
 
 export type GuardCategory = "starvation_diet" | "medical" | "off_topic";
@@ -50,21 +51,36 @@ export const tools = {
       },
       required: ["product"],
     }),
-    execute: async ({ product }) =>
-      product === "recipe_book"
-        ? {
-            product: "TestDiet Recipe Book",
-            blurb: "Personalized recipes, printed just for you.",
-            price: "",
-            url: "https://checkout.fitpulse.example/testdiet-recipe-book?ref=coach",
-          }
-        : {
-            product: "12-Week Get Shredded PDF",
-            blurb:
-              "Progressive plan, weekly check-ins, printable. One-time $9.99.",
-            price: "$9.99",
-            url: "https://checkout.fitpulse.example/get-shredded-12w?ref=coach",
-          },
+    execute: async ({ product }) => OFFERS[product],
+  }),
+  deliver_purchase: tool({
+    description:
+      "Deliver the 12-Week Get Shredded plan after checkout confirms payment. Call once, right after a 'Payment confirmed' message.",
+    inputSchema: jsonSchema<{ track?: "dumbbell" | "gym" }>({
+      type: "object",
+      properties: {
+        track: {
+          type: "string",
+          enum: ["dumbbell", "gym"],
+          description: "Equipment track; gym only if the user trains at a gym, otherwise dumbbell",
+        },
+      },
+    }),
+    execute: async ({ track = "dumbbell" }) => ({
+      product: OFFERS.shred_pdf.product,
+      track,
+      pdf: {
+        name: `get-shredded-12w-${track}.pdf`,
+        pages: 96,
+        url: `https://files.fitpulse.example/get-shredded-12w-${track}.pdf`,
+      },
+      week1: [
+        { day: "Mon", name: "Full body", minutes: 25 },
+        { day: "Wed", name: "Upper", minutes: 25 },
+        { day: "Fri", name: "Lower", minutes: 25 },
+        { day: "Sun", name: "Mobility", minutes: 15 },
+      ],
+    }),
   }),
   send_review_request: tool({
     description:
