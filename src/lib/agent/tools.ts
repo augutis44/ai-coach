@@ -63,8 +63,8 @@ export const tools = {
   }),
   search_workouts: tool({
     description:
-      "Search the workout library by available time and equipment. Use when the user asks which workout to do.",
-    inputSchema: jsonSchema<{ maxMinutes?: number; equipment?: string }>({
+      "Search the workout library by available time and equipment, optionally narrowed by focus (body part or goal) and intensity. Use when the user asks which workout to do. Only pass what the user actually said: each value becomes a tag on the workout card.",
+    inputSchema: jsonSchema<{ maxMinutes?: number; equipment?: string; focus?: Workout["focus"]; intensity?: Workout["intensity"] }>({
       type: "object",
       properties: {
         maxMinutes: {
@@ -84,9 +84,19 @@ export const tools = {
           ],
           description: "Equipment the user has, if they said",
         },
+        focus: {
+          type: "string",
+          enum: [...new Set(WORKOUTS.map((w) => w.focus))],
+          description: "Body part or goal the user asked for, if they said (legs, core, strength, fat loss, ...)",
+        },
+        intensity: {
+          type: "string",
+          enum: ["low", "moderate", "high"],
+          description: "How hard they want it, if they said (quick/intense → high, easy/recovery → low)",
+        },
       },
     }),
-    execute: async ({ maxMinutes, equipment }): Promise<Workout[]> => {
+    execute: async ({ maxMinutes, equipment, focus, intensity }): Promise<Workout[]> => {
       const fits = WORKOUTS.filter(
         (w) =>
           (!maxMinutes || w.minutes <= maxMinutes) &&
@@ -94,7 +104,9 @@ export const tools = {
             w.equipment === "none" ||
             (equipment !== "none" && w.equipment.includes(equipment))),
       );
-      return fits.length ? fits : WORKOUTS;
+      // Time and equipment are hard limits; focus and intensity only narrow when something matches.
+      const wanted = fits.filter((w) => (!focus || w.focus === focus) && (!intensity || w.intensity === intensity));
+      return wanted.length ? wanted : fits.length ? fits : WORKOUTS;
     },
   }),
   generate_upsell_link: upsellTool(getUpsellPolicy([])),
