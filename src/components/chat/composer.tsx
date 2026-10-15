@@ -40,7 +40,7 @@ export function Composer({ onSend, disabled, purchased }: { onSend: (text: strin
         <input
           id="chat-input"
           autoComplete="off"
-          className="flex-1 min-w-0 min-h-9 bg-transparent text-ink placeholder:text-muted outline-none"
+          className="flex-1 min-w-0 min-h-9 bg-transparent text-base sm:text-[15px] text-ink placeholder:text-muted outline-none"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={disabled}

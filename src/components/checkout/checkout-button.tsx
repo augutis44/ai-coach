@@ -4,7 +4,7 @@ import type { Send } from "@/lib/types";
 import { Icon } from "@/components/ui/icon";
 
 const FIELD =
-  "min-h-11 px-3 bg-surface text-ink placeholder:text-faint text-[15px] outline-none border border-line rounded-[10px] focus:border-faint";
+  "min-h-11 px-3 bg-surface text-ink placeholder:text-faint text-base sm:text-[15px] outline-none border border-line rounded-[10px] focus:border-faint";
 
 /** Trigger button plus the checkout modal. Paying is simulated and ends with a receipt message to Max. */
 export function CheckoutButton({
@@ -41,6 +41,8 @@ export function CheckoutButton({
       </button>
       <dialog
         ref={dialog}
+        // Opened from the phone account menu: the dialog is inside that popover, so close the menu only once checkout is done.
+        onClose={(e) => e.currentTarget.closest<HTMLElement>("[popover]")?.hidePopover()}
         aria-labelledby="checkout-title"
         className="m-auto w-120 max-w-[calc(100%-32px)] p-6 bg-surface text-body rounded-[20px] shadow-[0_24px_64px_rgba(0,0,0,0.25)] backdrop:bg-zinc-900/55 open:flex flex-col gap-4.5"
       >
