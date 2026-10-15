@@ -2,6 +2,7 @@ import type { GuardCategory } from "./agent/tools";
 import type { CoachMessage, ToolName } from "./types";
 
 const INTENT: Record<string, string> = {
+  ask_workout_quiz: "workout_advice",
   search_workouts: "workout_advice",
   generate_upsell_link: "upsell_trigger",
   deliver_purchase: "post_purchase",

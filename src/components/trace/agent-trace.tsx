@@ -1,9 +1,11 @@
+import { OFFERS } from "@/lib/agent/offers";
+import { COOLDOWN_MESSAGES, type UpsellPolicy } from "@/lib/agent/upsell-policy";
 import { getSession, getTurns } from "@/lib/trace";
 import type { CoachMessage } from "@/lib/types";
 import { TraceRow, TraceSection } from "./trace-row";
 
 /** Debug side panel: what the agent decided on each turn. Desktop only. */
-export function AgentTrace({ messages, purchased }: { messages: CoachMessage[]; purchased: boolean }) {
+export function AgentTrace({ messages, policy }: { messages: CoachMessage[]; policy: UpsellPolicy }) {
   const turns = getTurns(messages);
   const last = turns.at(-1);
   const session = getSession(turns);
@@ -29,8 +31,18 @@ export function AgentTrace({ messages, purchased }: { messages: CoachMessage[]; 
 
       <TraceSection title="Session">
         <dl className="flex flex-col gap-2">
-          <TraceRow label="Plan" value={purchased ? "Get Shredded · wk 1" : "free"} />
-          <TraceRow label="Upsell" value={purchased ? "converted" : session.upsellTurn ? `shown · turn ${session.upsellTurn}` : "not shown"} />
+          <TraceRow label="Owned" value={policy.owned.map((id) => OFFERS[id].product).join(", ") || "free"} />
+          <TraceRow label="Upsell mode" value={policy.mode === "proactive" ? "proactive" : "on request"} tone={policy.mode === "proactive" ? "plain" : "box"} />
+          <TraceRow
+            label="Last offer"
+            value={
+              policy.lastOffer
+                ? `${policy.lastOffer.product} · ${policy.lastOffer.messagesAgo} msgs ago${
+                    policy.owned.length ? "" : ` · ${Math.max(0, COOLDOWN_MESSAGES - policy.lastOffer.messagesAgo)} left`
+                  }`
+                : "none"
+            }
+          />
           <TraceRow label="Review asked" value={session.reviewTurn ? `turn ${session.reviewTurn}` : "no"} />
           <TraceRow label="Slots" value={session.slots || "—"} />
         </dl>
