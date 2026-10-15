@@ -22,7 +22,7 @@ export function Chat({ name, initialMessages }: { name: string; initialMessages:
     <div className="h-dvh flex text-[15px] leading-5.5">
       <SideNav name={name} purchased={purchased} send={send} busy={busy} />
       <main className="flex-1 min-w-0 flex flex-col">
-        <ChatHeader trace={trace} onToggleTrace={() => setTrace(!trace)} />
+        <ChatHeader name={name} purchased={purchased} send={send} busy={busy} trace={trace} onToggleTrace={() => setTrace(!trace)} />
         <MessageList
           messages={messages}
           send={send}

@@ -12,7 +12,7 @@ const NAV = [
 ];
 
 /** Desktop sidebar. Only "Coach" is live; the rest are placeholders from the design. */
-const initials = (name: string) => name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+export const initials = (name: string) => name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
 export function SideNav({ name, purchased, send, busy }: { name: string; purchased: boolean; send: Send; busy: boolean }) {
   return (
