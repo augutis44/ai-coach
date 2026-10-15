@@ -18,12 +18,15 @@ describe("getTurns / getSession", () => {
       assistant("a3", []),
       user("u4"),
       assistant("a4", [call("flag_guardrail", { category: "medical" })]),
+      user("u5"),
+      assistant("a5", [call("deliver_purchase", { track: "dumbbell" })]),
     ]);
     expect(turns.map((t) => [t.n, t.intent, t.tool, t.guard])).toEqual([
       [1, "workout_advice", "search_workouts", undefined],
       [2, "gratitude", "send_review_request", undefined],
       [3, "informational", undefined, undefined],
       [4, "guardrail_block", undefined, "medical"],
+      [5, "post_purchase", "deliver_purchase", undefined],
     ]);
     expect(getSession(turns)).toEqual({ reviewTurn: 2, upsellTurn: undefined, slots: "20 min · none" });
   });
